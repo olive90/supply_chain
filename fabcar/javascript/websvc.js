@@ -64,7 +64,7 @@ app.post('/writews',(req,res)=>{
     (async () => {
         let result = await query.writeblockdata(key,purchaseOrder)
         
-        res.json({"Purchase order submitted": result})
+        res.json({"Purchase Order submitted successfully": result})
         
       })();
 
@@ -81,7 +81,20 @@ app.post('/queryblock',(req,res)=>{
         result = result.toString('utf-8')
         result = JSON.parse(result)
         
-        res.json({"Purchase order": result})
+        res.json({"PurchaseOrder": result})
+        
+      })();
+
+})
+
+app.get('/getblocks',(req,res)=>{
+
+    (async () => {
+        let result = await query.getblocks()
+        result = result.toString('utf-8')
+        result = JSON.parse(result)
+        
+        res.json({"AllData": result})
         
       })();
 

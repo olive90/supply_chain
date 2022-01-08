@@ -40,9 +40,27 @@ class FabCar extends Contract {
         let response = await ctx.stub.getState(key)
         response = response.toString('utf-8')
         response = JSON.parse(response)
-        //return response.toString();
-        //return JSON.stringify(response);
         return response;
+    }
+
+    async getAllData(ctx){
+        const startKey = '';
+        const endKey = '';
+        const allResults = [];
+        for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
+            const strValue = Buffer.from(value).toString('utf8');
+            let record;
+            try {
+                record = JSON.parse(strValue);
+            } catch (err) {
+                console.log(err);
+                record = strValue;
+            }
+            allResults.push({ Key: key, Record: record });
+        }
+        console.info(allResults);
+        console.info(allResults);
+        return JSON.stringify(allResults);
     }
 
     async queryPatientsByDiagnosis(ctx, diagnosis){
@@ -62,8 +80,6 @@ class FabCar extends Contract {
         while(true){
             let res = await iterator.next()
             let resJson = {}
-            //res.value.key
-            //res.value.value
             if(res.value && res.value.value.toString()){
                 resJson.key = res.value.key;
                 resJson.value = JSON.parse(res.value.value.toString('utf-8'))
