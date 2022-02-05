@@ -205,9 +205,6 @@ async function updateBlock(key, user, pofield, pofieldvalue){
             case "PRNo":
                     assetJSON.PRNo = pofieldvalue;
                     break;
-            case "PRPurpose":
-                    assetJSON.PRPurpose = pofieldvalue;
-                    break;
             case "PRRequestedBy":
                     assetJSON.PRRequestedBy = pofieldvalue;
                     break;
@@ -226,14 +223,17 @@ async function updateBlock(key, user, pofield, pofieldvalue){
             case "ItemId":
                     assetJSON.ItemId = pofieldvalue;
                     break;
-            case "EstimatedCost":
-                    assetJSON.EstimatedCost = pofieldvalue;
+            case "VendorEstdCost":
+                    assetJSON.VendorEstdCost = pofieldvalue;
                     break;
-            case "EstimatedAmount":
-                    assetJSON.EstimatedAmount = pofieldvalue;
+            case "PREstdQuantity":
+                    assetJSON.PREstdQuantity = pofieldvalue;
                     break;
-            case "EstimatedTotalCost":
-                    assetJSON.EstimatedTotalCost = pofieldvalue;    
+            case "VendorEstdTotalCost":
+                    assetJSON.VendorEstdTotalCost = pofieldvalue;    
+                    break;
+            case "VendorQuotedate":
+                    assetJSON.VendorQuotedate = pofieldvalue;    
                     break;
             case "PONo":
                     assetJSON.PONo = pofieldvalue;
@@ -279,6 +279,12 @@ async function updateBlock(key, user, pofield, pofieldvalue){
                     break;
             case "DeliveryDate":
                     assetJSON.DeliveryDate = pofieldvalue;        
+                    break;
+            case "DeliveredDate":
+                    assetJSON.DeliveredDate = pofieldvalue;        
+                    break;
+            case "GenStatus":
+                    assetJSON.GenStatus = pofieldvalue;        
                     break;
             default:
                 break;
@@ -387,7 +393,6 @@ async function getblocks(){
     }
 }
 
-<<<<<<< Updated upstream
 async function writeVendorQuotation(key, vendorQuotation){
     try {
         // load the network configuration
@@ -481,10 +486,9 @@ async function getQuoteByKey(key){
         process.exit(1);
     }
 }
-=======
+
 async function registeruser(username){
         try{
->>>>>>> Stashed changes
 
         let user = username;
 
@@ -554,13 +558,10 @@ module.exports = {
     writeblockdata : writeblockdata,
     getblockbykey : getblockbykey,
     getblocks : getblocks,
-<<<<<<< Updated upstream
     getQuoteByKey : getQuoteByKey,
-    writeVendorQuotation : writeVendorQuotation
-=======
+    writeVendorQuotation : writeVendorQuotation,
     updateBlock : updateBlock,
     registeruser : registeruser
->>>>>>> Stashed changes
 
 }
 main();

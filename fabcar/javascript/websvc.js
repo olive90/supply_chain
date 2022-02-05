@@ -71,9 +71,10 @@ app.post('/writews',(req,res)=>{
         "PRApprovedDate"    : req.body['PRApprovedDate'],
         "PRStatus"          : req.body['PRStatus'],
         "ItemId"            : req.body['ItemId'],
-        "EstimatedCost"     : req.body['EstimatedCost'],
-        "EstimatedAmount"   : req.body['EstimatedAmount'],
-        "EstimatedTotalCost": req.body['EstimatedTotalCost'],
+        "VendorEstdCost": req.body['VendorEstdCost'],
+        "PREstdQuantity"   : req.body['PREstdQuantity'],
+        "VendorEstdTotalCost": req.body['VendorEstdTotalCost'],
+        "VendorQuotedate": req.body['VendorQuotedate'],
         "PONo"              : req.body['PONo'],
         "OrderedQuantity"   : req.body['OrderedQuantity'],
         "OrderedItemCost"   : req.body['OrderedItemCost'],
@@ -88,7 +89,9 @@ app.post('/writews',(req,res)=>{
         "POApprovedDate"    : req.body['POApprovedDate'],
         "POStatus"          : req.body['POStatus'],
         "DeliveryAddress"   : req.body['DeliveryAddress'],
-        "DeliveryDate"      : req.body['DeliveryDate']
+        "DeliveryDate"      : req.body['DeliveryDate'],
+        "DeliveredDate"     :req.body['DeliveredDate'],
+        "GenStatus"     :req.body['GenStatus']
     };
 
     (async () => {
