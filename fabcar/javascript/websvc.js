@@ -30,8 +30,36 @@ app.post('/queryws',(req,res)=>{
     
 })
 
+app.post('/updatews',(req,res)=>{
+
+    let user = req.body['user'];
+    let key = req.body['key'];
+    let pofield = req.body['pofield'];
+    let pofieldvalue = req.body['pofieldvalue'];
+  
+    console.log(key);
+    
+    (async () => {
+        let result = await query.updateBlock(key,user,pofield,pofieldvalue)
+        
+        if (result == 0)
+        {
+            res.json({"Prcourement order does not exist with key ID": key})
+
+        }
+        else
+        {
+            res.json({"Updated": result})
+        }
+        
+      })();
+    //res.send('Update submitted successfully')
+})
+    
+
 app.post('/writews',(req,res)=>{
 
+    var user = req.body['user'];
     var key = req.body['Id'];
     var purchaseOrder = {
         "Id"                : req.body['Id'],
@@ -54,15 +82,17 @@ app.post('/writews',(req,res)=>{
         "SupplierId"        : req.body['SupplierId'],
         "SupplierAddress"   : req.body['SupplierAddress'],
         "PORequestedBy"     : req.body['PORequestedBy'],
+        "POReqContact"      : req.body['POReqContact'],
         "PORequestedDate"   : req.body['PORequestedDate'],
         "POApprovedBy"      : req.body['POApprovedBy'],
         "POApprovedDate"    : req.body['POApprovedDate'],
         "POStatus"          : req.body['POStatus'],
+        "DeliveryAddress"   : req.body['DeliveryAddress'],
         "DeliveryDate"      : req.body['DeliveryDate']
     };
 
     (async () => {
-        let result = await query.writeblockdata(key,purchaseOrder)
+        let result = await query.writeblockdata(user,key,purchaseOrder)
         
         res.json({"Purchase Order submitted successfully": result})
         
@@ -84,8 +114,33 @@ app.post('/queryblock',(req,res)=>{
         res.json({"PurchaseOrder": result})
         
       })();
-
 })
+
+
+app.post('/registeruser',(req,res)=>{
+    
+    let username = req.body['username'];
+  
+    (async () => { 
+        let result = await query.registeruser(username)
+                
+        switch(result)
+        {
+            case 0:
+                res.send("An identity for the user already exists in the wallet") 
+                break;
+            case 1:
+                res.send('An identity for the admin user "admin" does not exist in the wallet. Run the enrollAdmin.js application before retrying') 
+                break;
+            case 2:
+                res.json({'Failed to register user :':username}) 
+                break;
+            case 200:
+                res.json({"Successfully registered and imported it into the wallet for user : ":username}) 
+        }
+    })();
+})
+
 
 app.get('/getblocks',(req,res)=>{
 
@@ -140,6 +195,7 @@ app.post('/getVendorQuotation',(req,res)=>{
       })();
 
 })
+
 
 
 app.listen(port,()=>{console.log("This application is running on the port no :",port)})

@@ -46,6 +46,11 @@ class FabCar extends Contract {
 
     async readData(ctx, key){
         let response = await ctx.stub.getState(key)
+        
+        if (!response || response.length === 0) {
+            console.log("Procurement order not exist");
+            return 0;
+        }
         response = response.toString('utf-8')
         response = JSON.parse(response)
         return response;
