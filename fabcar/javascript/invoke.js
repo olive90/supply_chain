@@ -118,9 +118,24 @@ async function main() {
             "POApprovedDate" : "POApprovedDate",
             "POStatus" : "POStatus",
             "DeliveryDate" : "DeliveryDate"
-            }
+        }
+
+        let keyQuote = "QuoteId"
+        var quotation = 
+        {
+            "BlockFor" : "BlockFor",
+            "QuoteId" : "QuoteId",
+            "PRId" : "PRId",
+            "Quotations" : "Quotations",
+            "ProductIds" : "ProductIds",
+            "Remarks" : "Remarks",
+            "QuoteBy" : "QuoteBy",
+            "QuoteDate" : "QuoteDate",
+            "Status" : "Status"
+        }
 
         await contract.submitTransaction("writeJsonData",keyp, JSON.stringify(purchaseOrder));
+        await contract.submitTransaction("writeVerdorQuote",keyQuote, JSON.stringify(quotation));
 
         console.log('Transaction has been submitted');
 

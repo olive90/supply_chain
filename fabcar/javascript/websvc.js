@@ -100,5 +100,46 @@ app.get('/getblocks',(req,res)=>{
 
 })
 
+app.post('/writeVendorQuotation',(req,res)=>{
+
+    var key = req.body['QuoteId'];
+    var quotation = {
+        "BlockFor" : "quotation",
+        "QuoteId" : req.body['QuoteId'],
+        "PRId" : req.body['PRId'],
+        "Quotations" : req.body['Quotations'],
+        "ProductIds" : req.body['ProductIds'],
+        "Remarks" : req.body['Remarks'],
+        "QuoteBy" : req.body['QuoteBy'],
+        "QuoteDate" : req.body['QuoteDate'],
+        "Status" : req.body['Status']
+    };
+
+    (async () => {
+        let result = await query.writeVendorQuotation(key,quotation)
+        
+        res.json({"Quotation submitted successfully": result})
+        
+      })();
+
+})
+
+app.post('/getVendorQuotation',(req,res)=>{
+    
+    let key = req.body['key'];
+   
+    console.log("Quotation of key ID :",key);
+
+    (async () => {
+        let result = await query.getQuoteByKey(key)
+        result = result.toString('utf-8')
+        result = JSON.parse(result)
+        
+        res.json({"VendorQuotes": result})
+        
+      })();
+
+})
+
 
 app.listen(port,()=>{console.log("This application is running on the port no :",port)})

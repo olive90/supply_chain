@@ -36,6 +36,14 @@ class FabCar extends Contract {
         return value;
     }
 
+    async writeVerdorQuote(ctx, key, value){
+        console.log ("***********",value)
+        value = JSON.parse(value)
+        let response = await ctx.stub.putState(key, Buffer.from(JSON.stringify(value)))
+        
+        return response;
+    }
+
     async readData(ctx, key){
         let response = await ctx.stub.getState(key)
         response = response.toString('utf-8')
@@ -71,6 +79,13 @@ class FabCar extends Contract {
         let result = await this.getIteratorData(iterator)
 
         return JSON.stringify(result);
+    }
+
+    async readVendorQuote(ctx, key){
+        let response = await ctx.stub.getState(key)
+        response = response.toString('utf-8')
+        response = JSON.parse(response)
+        return response;
     }
 
     async getIteratorData(iterator){
