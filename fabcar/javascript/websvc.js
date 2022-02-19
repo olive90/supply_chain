@@ -64,7 +64,6 @@ app.post('/writews',(req,res)=>{
     var purchaseOrder = {
         "Id"                : req.body['Id'],
         "PRNo"              : req.body['PRNo'],
-        "PRPurpose"         : req.body['PRPurpose'],
         "PRRequestedBy"     : req.body['PRRequestedBy'],
         "PRRequestDate"     : req.body['PRRequestDate'],
         "PRApprovedBy"      : req.body['PRApprovedBy'],
@@ -143,6 +142,37 @@ app.post('/registeruser',(req,res)=>{
         }
     })();
 })
+
+app.post('/removeuser',(req,res)=>{
+    
+    let requester = req.body['requester'];
+    let username = req.body['username'];
+
+    (async () => { 
+        let result = await query.removeuser(requester,username)
+                
+        switch(result)
+        {
+            case 0:
+                res.send("Identity does not exist for the requested user to be removed ") 
+                break;
+            case 1:
+                res.send('Remove request cannot br processed as admin identity does not exist in the wallet for requester user:')
+
+                break;
+            case 2:
+                res.send('Remove request cannot br processed as request was not sent from admin user')
+
+                break;
+            case 3:
+                res.json({'Failed to remove user :':username}) 
+                break;
+            case 200:
+                res.json({"Now Successfully removed from the wallet for user: ":username}) 
+        }
+    })();
+})
+
 
 
 app.get('/getblocks',(req,res)=>{

@@ -10,6 +10,7 @@ const { Gateway, Wallets } = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
 const path = require('path');
 const fs = require('fs');
+const { use } = require('chai');
 
 
 async function main() {
@@ -110,12 +111,12 @@ try {
     // Create a new file system based wallet for managing identities.
     const walletPath = path.join(process.cwd(), 'wallet');
     const wallet = await Wallets.newFileSystemWallet(walletPath);
-    //console.log(`Wallet path: ${walletPath}`);
+    console.log(`Wallet path: ${walletPath}`);
 
     // Check to see if we've already enrolled the user.
     const identity = await wallet.get(user);
     if (!identity) {
-        console.log('An identity for the user "appUser" does not exist in the wallet');
+        console.log('Identity does not exist in the wallet for the user: ',user);
         console.log('Run the registerUser.js application before retrying');
         return;
     }
@@ -543,6 +544,13 @@ async function registeruser(username){
                 type: 'X.509',
         };
         await wallet.put(user, x509Identity);
+        
+        // Check to see if  enrolled the user.
+        const userIdentityNew = await wallet.get(user);
+        if (userIdentityNew) {
+                console.log('Identity for the user now exists in the wallet: ',user);
+                //return 0;
+        }
         console.log('Successfully registered and imported it into the wallet for user : ',user);
         return 200;
         }
@@ -553,6 +561,77 @@ async function registeruser(username){
         }
 }
 
+async function removeuser(requester, username){
+        try{
+
+        let user = username;
+
+        // load the network configuration
+        const ccpPath = path.resolve(__dirname, '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
+        const ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
+
+        // Create a new CA client for interacting with the CA.
+        const caURL = ccp.certificateAuthorities['ca.org1.example.com'].url;
+        const ca = new FabricCAServices(caURL);
+
+        // Create a new file system based wallet for managing identities.
+        const walletPath = path.join(process.cwd(), 'wallet');
+        const wallet = await Wallets.newFileSystemWallet(walletPath);
+        console.log(`Wallet path: ${walletPath}`);
+
+        // Check to see if we've already enrolled the admin user.
+        const adminIdentity = await wallet.get('admin');
+        if (!adminIdentity) {
+                console.log('Remove request cannot be processed as admin identity does not exist in the wallet');
+                console.log('Hints : Run the enrollAdmin.js application before retrying');
+                return 1;
+        }
+        else {
+                if(requester != 'admin')
+                {
+                        console.log('Remove request cannot br processed as requester is not admin user');
+                        console.log('Hints : Send removal request from admin user');
+                        return 2;
+                }
+        }
+
+        //// build a user object for authenticating with the CA
+        const provider = wallet.getProviderRegistry().getProvider(adminIdentity.type);
+        const adminUser = await provider.getUserContext(adminIdentity, 'admin');
+        
+        
+         // Check to see if we've already enrolled the user.
+         const userIdentity = await wallet.get(user);
+                  
+         if(userIdentity) {
+                 console.log('An identity exists in the wallet for the user: ',user);
+                 await wallet.remove(user);
+                 console.log('Now Successfully removed from the wallet for user: ',user);
+
+                 const revokation = await ca.revoke({
+                        enrollmentID: user
+                },adminUser);
+                
+                return 200;
+         }
+         else if (!userIdentity){
+
+                console.log('Identity does not exist for the requested user to be removed: ',user);
+                return 0;
+         }
+     
+        
+        
+        }
+        catch(error){
+                console.error(`Failed to remove user : ${error}`);
+                return 3;
+            
+        }
+}
+
+
+
 module.exports = {
     getpatientbydiagnosis : getpatientbydiagnosis,
     writeblockdata : writeblockdata,
@@ -561,7 +640,8 @@ module.exports = {
     getQuoteByKey : getQuoteByKey,
     writeVendorQuotation : writeVendorQuotation,
     updateBlock : updateBlock,
-    registeruser : registeruser
+    registeruser : registeruser,
+    removeuser : removeuser
 
 }
 main();
